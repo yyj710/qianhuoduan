@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  username        String    @unique
+  password        String
+  phone           String?
+  college         String?
+  campus          String?
+  avatar          String?
+  creditScore     Float     @default(5.0) @map("credit_score")
+  role            String    @default("user")
+  onlineStatus    Int       @default(0) @map("online_status")
+  lastActiveTime  DateTime? @map("last_active_time")
+  status          Int       @default(1)
+  createTime      DateTime  @default(now()) @map("create_time")
+  updateTime      DateTime  @updatedAt @map("update_time")
+
+  demands         Demand[]
+  skills          Skill[]
+  buyerOrders     Order[]   @relation("BuyerOrders")
+  sellerOrders    Order[]   @relation("SellerOrders")
+  sentMessages    Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  givenComments   Comment[] @relation("GivenComments")
+  receivedComments Comment[] @relation("ReceivedComments")
+
+  @@map("user")
+}
+
+model Skill {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  title        String
+  tags         String
+  description  String
+  price        Float
+  deliveryTime String   @map("delivery_time")
+  campus       String
+  viewCount    Int      @default(0) @map("view_count")
+  dealCount    Int      @default(0) @map("deal_count")
+  status       Int      @default(1)
+  createTime   DateTime @default(now()) @map("create_time")
+
+  user         User     @relation(fields: [userId], references: [id])
+  orders       Order[]
+
+  @@map("skill")
+}
+
+model Demand {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  title       String
+  tags        String
+  description String
+  budget      Float
+  deadline    String
+  campus      String
+  viewCount   Int      @default(0) @map("view_count")
+  matchCount  Int      @default(0) @map("match_count")
+  status      Int      @default(1)
+  createTime  DateTime @default(now()) @map("create_time")
+
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("demand")
+}
+
+model Order {
+  id           Int       @id @default(autoincrement())
+  orderNo      String    @unique @map("order_no")
+  buyerId      Int       @map("buyer_id")
+  sellerId     Int       @map("seller_id")
+  skillId      Int       @map("skill_id")
+  amount       Float
+  status       Int       @default(0)
+  confirmTime  DateTime? @map("confirm_time")
+  completeTime DateTime? @map("complete_time")
+  createTime   DateTime  @default(now()) @map("create_time")
+  updateTime   DateTime  @updatedAt @map("update_time")
+
+  buyer        User      @relation("BuyerOrders", fields: [buyerId], references: [id])
+  seller       User      @relation("SellerOrders", fields: [sellerId], references: [id])
+  skill        Skill     @relation(fields: [skillId], references: [id])
+  comments     Comment[]
+
+  @@map("order")
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  targetId   Int      @map("target_id")
+  orderId    Int      @map("order_id")
+  type       String
+  score      Int
+  content    String?
+  createTime DateTime @default(now()) @map("create_time")
+
+  user       User     @relation("GivenComments", fields: [userId], references: [id])
+  target     User     @relation("ReceivedComments", fields: [targetId], references: [id])
+  order      Order    @relation(fields: [orderId], references: [id])
+
+  @@map("comment")
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  senderId   Int      @map("sender_id")
+  receiverId Int      @map("receiver_id")
+  type       String   @default("chat")
+  content    String
+  extraData  String?  @map("extra_data")
+  readStatus Int      @default(0) @map("read_status")
+  createTime DateTime @default(now()) @map("create_time")
+
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+
+  @@map("message")
+}
