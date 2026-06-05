@@ -44,7 +44,7 @@ export default function SkillCreate() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto' }}>
+    <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 8px' }}>
       <Card>
         <Title level={4}>{isEdit ? '编辑技能' : '发布技能'}</Title>
         <Form form={form} layout="vertical" onFinish={onFinish}>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, Row, Col, Tag, Typography, Input, Select, Button, Space, Empty, Pagination } from 'antd';
+import { Card, Row, Col, Tag, Typography, Input, Select, Button, Empty, Pagination } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { demandService } from '../../services/demandService';
@@ -35,11 +35,11 @@ export default function DemandList() {
         <Title level={4} style={{ margin: 0 }}>需求大厅</Title>
         {isLoggedIn && <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/demands/create')}>发布需求</Button>}
       </div>
-      <Space style={{ marginBottom: 16 }}>
-        <Input placeholder="搜索需求" prefix={<SearchOutlined />} value={keyword} onChange={e => setKeyword(e.target.value)} onPressEnter={() => { setPage(1); fetchList(); }} style={{ width: 200 }} />
-        <Select placeholder="校区" style={{ width: 120 }} value={campus} onChange={v => { setCampus(v); setPage(1); }} allowClear options={['粤海校区', '丽湖校区', '沧海校区', '不限'].map(c => ({ label: c, value: c }))} />
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+        <Input placeholder="搜索需求" prefix={<SearchOutlined />} value={keyword} onChange={e => setKeyword(e.target.value)} onPressEnter={() => { setPage(1); fetchList(); }} style={{ flex: '1 1 200px', minWidth: 120 }} />
+        <Select placeholder="校区" style={{ flex: '0 0 120px' }} value={campus} onChange={v => { setCampus(v); setPage(1); }} allowClear options={['粤海校区', '丽湖校区', '沧海校区', '不限'].map(c => ({ label: c, value: c }))} />
         <Button type="primary" onClick={() => { setPage(1); fetchList(); }}>搜索</Button>
-      </Space>
+      </div>
       {demands.length === 0 && !loading ? <Empty description="暂无需求" /> : (
         <Row gutter={[16, 16]}>
           {demands.map((d: any) => (

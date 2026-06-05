@@ -62,7 +62,7 @@ export default function AppLayout() {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed} breakpoint="lg" onBreakpoint={(b) => setCollapsed(b)}>
+      <Sider trigger={null} collapsible collapsed={collapsed} breakpoint="md" onBreakpoint={(b) => setCollapsed(b)}>
         <div style={{ height: 48, margin: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold', fontSize: collapsed ? 14 : 18 }}>
           {collapsed ? '深' : '🏫 深技联'}
         </div>
@@ -82,11 +82,11 @@ export default function AppLayout() {
           <Dropdown menu={{ items: userMenuItems, onClick: ({ key }) => key === 'logout' ? handleLogout() : navigate('/profile') }}>
             <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
               <Avatar icon={<UserOutlined />} src={user?.avatar} />
-              <span>{user?.username || '用户'}</span>
+              <span className="hide-on-mobile">{user?.username || '用户'}</span>
             </span>
           </Dropdown>
         </Header>
-        <Content style={{ margin: 24, padding: 24, background: colorBgContainer, borderRadius: borderRadiusLG, minHeight: 280 }}>
+        <Content style={{ margin: 'var(--content-margin)', padding: 'var(--content-padding)', background: colorBgContainer, borderRadius: borderRadiusLG, minHeight: 280 }}>
           <Outlet />
         </Content>
       </Layout>

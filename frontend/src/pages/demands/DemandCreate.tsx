@@ -34,7 +34,7 @@ export default function DemandCreate() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto' }}>
+    <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 8px' }}>
       <Card>
         <Title level={4}>发布需求</Title>
         <Form form={form} layout="vertical" onFinish={onFinish}>

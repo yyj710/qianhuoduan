@@ -31,20 +31,20 @@ export default function HomePage() {
         <Text type="secondary">深圳大学0佣金技能互助与竞赛资源平台 — 让市场在资源配置中起决定作用</Text>
       </div>
 
-      <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={8}>
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24} sm={8}>
           <Card><Statistic title="技能总数" value={stats.skills} prefix={<ToolOutlined />} /></Card>
         </Col>
-        <Col span={8}>
+        <Col xs={24} sm={8}>
           <Card><Statistic title="需求总数" value={stats.demands} prefix={<FileSearchOutlined />} /></Card>
         </Col>
-        <Col span={8}>
+        <Col xs={24} sm={8}>
           <Card><Statistic title="注册用户" value={stats.users} prefix={<UserOutlined />} /></Card>
         </Col>
       </Row>
 
-      <Row gutter={16}>
-        <Col span={12}>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={12}>
           <Card
             title="🔥 最新技能"
             extra={<Button type="link" onClick={() => navigate('/skills')}>查看更多</Button>}
@@ -71,7 +71,7 @@ export default function HomePage() {
             />
           </Card>
         </Col>
-        <Col span={12}>
+        <Col xs={24} lg={12}>
           <Card
             title="📋 最新需求"
             extra={<Button type="link" onClick={() => navigate('/demands')}>查看更多</Button>}

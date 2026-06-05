@@ -30,8 +30,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-      <Card style={{ width: 420, boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: '0 16px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+      <Card style={{ width: '100%', maxWidth: 420, boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <Title level={2}>📝 注册账号</Title>
           <Text type="secondary">加入深圳大学技能互助平台</Text>

@@ -51,7 +51,7 @@ export default function ProfilePage() {
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Space>
+          <Space wrap>
             <Avatar size={64} icon={<UserOutlined />} src={profile.avatar} />
             <div>
               <h2>{profile.username}</h2>
@@ -74,7 +74,7 @@ export default function ProfilePage() {
             </Space>
           </Form>
         ) : (
-          <Descriptions column={2} bordered>
+          <Descriptions column={{ xs: 1, sm: 2 }} bordered>
             <Descriptions.Item label="用户名">{profile.username}</Descriptions.Item>
             <Descriptions.Item label="信用评分">⭐ {profile.creditScore?.toFixed(1)}</Descriptions.Item>
             <Descriptions.Item label="手机号">{profile.phone || '未设置'}</Descriptions.Item>

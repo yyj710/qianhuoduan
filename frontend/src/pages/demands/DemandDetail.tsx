@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, Descriptions, Tag, Typography, Spin, List, Button, Space, Divider, message as antMsg } from 'antd';
+import { Card, Descriptions, Tag, Typography, Spin, List, Button, Space, Row, Col, Divider, message as antMsg } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
@@ -42,13 +42,13 @@ export default function DemandDetail() {
     <div>
       <Card style={{ marginBottom: 16 }}>
         <Title level={3}>{demand.title}</Title>
-        <Space style={{ marginBottom: 16 }}>
+        <Space style={{ marginBottom: 16 }} wrap>
           {demand.tags?.map((t: string) => <Tag key={t} color="green">{t}</Tag>)}
           <Tag color="purple">{demand.campus}</Tag>
           <Tag>截止：{demand.deadline}</Tag>
         </Space>
         <Paragraph style={{ fontSize: 16, whiteSpace: 'pre-wrap' }}>{demand.description}</Paragraph>
-        <Descriptions>
+        <Descriptions column={{ xs: 1, sm: 2, md: 3 }}>
           <Descriptions.Item label="预算"><Text strong style={{ color: '#52c41a', fontSize: 18 }}>¥{demand.budget}</Text></Descriptions.Item>
           <Descriptions.Item label="发布者">{demand.user?.username}</Descriptions.Item>
           <Descriptions.Item label="信用评分">⭐{demand.user?.creditScore?.toFixed(1)}</Descriptions.Item>
@@ -63,8 +63,8 @@ export default function DemandDetail() {
           dataSource={matches}
           renderItem={(match: any, index: number) => (
             <Card style={{ marginBottom: 12 }} key={match.skillId}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
+              <Row gutter={[16, 12]} align="middle">
+                <Col xs={24} sm={18}>
                   <Space>
                     <Tag color="orange">推荐 #{index + 1}</Tag>
                     <Text strong style={{ fontSize: 16 }}>{match.title}</Text>
@@ -73,15 +73,17 @@ export default function DemandDetail() {
                     {match.tags?.map((t: string) => <Tag key={t} color="blue">{t}</Tag>)}
                     <Tag>{match.campus}</Tag>
                   </div>
-                  <Space>
+                  <Space wrap>
                     <Text>匹配度：<Text strong style={{ color: '#1677ff' }}>{match.totalScore.toFixed(1)}%</Text></Text>
                     <Text>标签匹配：{match.tagScore.toFixed(1)}%</Text>
                     <Text>信用分：⭐{match.creditScore.toFixed(1)}</Text>
                     <Text>价格：¥{match.price}</Text>
                   </Space>
-                </div>
-                <Button type="primary" onClick={() => handleOrder(match)} disabled={!user || user.id === match.userId}>下单</Button>
-              </div>
+                </Col>
+                <Col xs={24} sm={6} style={{ textAlign: 'right' }}>
+                  <Button type="primary" onClick={() => handleOrder(match)} disabled={!user || user.id === match.userId}>下单</Button>
+                </Col>
+              </Row>
             </Card>
           )}
         />

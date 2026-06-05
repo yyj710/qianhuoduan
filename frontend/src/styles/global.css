@@ -9,9 +9,36 @@ body {
   background: #f5f5f5;
 }
 
+:root {
+  --content-padding: 24px;
+  --content-margin: 24px;
+  --page-max-width: 1200px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --content-padding: 12px;
+    --content-margin: 8px;
+  }
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .mobile-full-width {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  :root {
+    --content-padding: 16px;
+    --content-margin: 16px;
+  }
+}
+
 .page-container {
-  padding: 24px;
-  max-width: 1200px;
+  padding: var(--content-padding);
+  max-width: var(--page-max-width);
   margin: 0 auto;
 }
 

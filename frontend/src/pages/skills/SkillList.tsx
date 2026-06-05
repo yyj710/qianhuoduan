@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, Row, Col, Tag, Typography, Input, Select, Button, Space, Empty, Pagination, Rate } from 'antd';
+import { Card, Row, Col, Tag, Typography, Input, Select, Button, Empty, Pagination, Rate } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { skillService } from '../../services/skillService';
@@ -38,11 +38,11 @@ export default function SkillList() {
           <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/skills/create')}>发布技能</Button>
         )}
       </div>
-      <Space style={{ marginBottom: 16 }}>
-        <Input placeholder="搜索技能" prefix={<SearchOutlined />} value={keyword} onChange={e => setKeyword(e.target.value)} onPressEnter={onSearch} style={{ width: 200 }} />
-        <Select placeholder="校区" style={{ width: 120 }} value={campus} onChange={v => { setCampus(v); setPage(1); }} allowClear options={campusFilters.filter(Boolean).map(c => ({ label: c, value: c }))} />
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+        <Input placeholder="搜索技能" prefix={<SearchOutlined />} value={keyword} onChange={e => setKeyword(e.target.value)} onPressEnter={onSearch} style={{ flex: '1 1 200px', minWidth: 120 }} />
+        <Select placeholder="校区" style={{ flex: '0 0 120px' }} value={campus} onChange={v => { setCampus(v); setPage(1); }} allowClear options={campusFilters.filter(Boolean).map(c => ({ label: c, value: c }))} />
         <Button type="primary" onClick={onSearch}>搜索</Button>
-      </Space>
+      </div>
       {skills.length === 0 && !loading ? <Empty description="暂无技能" /> : (
         <Row gutter={[16, 16]}>
           {skills.map((s: any) => (

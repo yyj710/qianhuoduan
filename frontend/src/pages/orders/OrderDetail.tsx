@@ -74,7 +74,7 @@ export default function OrderDetail() {
           ]}
         />
 
-        <Descriptions column={2} bordered>
+        <Descriptions column={{ xs: 1, sm: 2 }} bordered>
           <Descriptions.Item label="订单编号">{order.orderNo}</Descriptions.Item>
           <Descriptions.Item label="金额"><Text strong style={{ color: '#f5222d', fontSize: 16 }}>¥{order.amount}</Text></Descriptions.Item>
           <Descriptions.Item label="技能">{order.skill?.title}</Descriptions.Item>
@@ -87,7 +87,7 @@ export default function OrderDetail() {
 
         {/* Action buttons based on state */}
         <div style={{ marginTop: 24, textAlign: 'center' }}>
-          <Space>
+          <Space wrap>
             {order.status === 0 && (isBuyer || isSeller) && (
               <>
                 <Button type="primary" onClick={() => handleAction('confirm')}>确认订单</Button>
