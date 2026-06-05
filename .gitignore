@@ -3,3 +3,5 @@ dist/
 .env
 *.db
 *.db-journal
+netlify/functions/api.js
+prisma/schema.prisma

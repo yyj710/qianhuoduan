@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = "frontend/dist"
+  functions = "netlify/functions"
+
+# API 请求转发到 serverless function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+# SPA fallback：非 API 路径都返回 index.html（React Router 处理）
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
