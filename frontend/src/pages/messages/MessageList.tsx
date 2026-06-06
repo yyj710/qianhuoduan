@@ -1,13 +1,161 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Card, List, Input, Button, Typography, Space, Badge, Avatar, Divider, Empty, message as antMsg } from 'antd';
-import { SendOutlined, UserOutlined, LeftOutlined } from '@ant-design/icons';
+import { Card, List, Input, Button, Typography, Space, Badge, Avatar, Divider, Empty, Tabs, Tag, Skeleton } from 'antd';
+import { SendOutlined, UserOutlined, LeftOutlined, BellOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { messageService } from '../../services/messageService';
+import { announcementService } from '../../services/announcementService';
 import { setUnreadCount } from '../../store/messageSlice';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
+
+const CATEGORY_LABELS: Record<string, string> = {
+  scholarship: '奖学金',
+  lecture: '讲座',
+  exam: '考试',
+  competition: '比赛',
+  activity: '活动',
+  academic: '学术',
+  recruitment: '就业',
+  other: '其他',
+};
+
+const CATEGORY_COLORS: Record<string, string> = {
+  scholarship: 'gold',
+  lecture: 'purple',
+  exam: 'red',
+  competition: 'orange',
+  activity: 'green',
+  academic: 'blue',
+  recruitment: 'cyan',
+  other: 'default',
+};
+
+function AnnouncementPanel() {
+  const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Record<string, number>>({});
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const PAGE_SIZE = 15;
+
+  const fetchAnnouncements = useCallback(async (cat: string, p: number) => {
+    setLoading(true);
+    try {
+      const res = await announcementService.list({
+        category: cat === 'all' ? undefined : cat,
+        page: p,
+        pageSize: PAGE_SIZE,
+      });
+      if (p === 1) {
+        setAnnouncements(res.data.list);
+      } else {
+        setAnnouncements(prev => [...prev, ...res.data.list]);
+      }
+      setTotal(res.data.total);
+      if (res.data.categories) setCategories(res.data.categories);
+    } catch { /* ignore */ }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+    fetchAnnouncements(activeCategory, 1);
+  }, [activeCategory, fetchAnnouncements]);
+
+  const loadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchAnnouncements(activeCategory, nextPage);
+  };
+
+  const formatDate = (d: string | null) => {
+    if (!d) return '';
+    const date = new Date(d);
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+  };
+
+  const categoryTabs = [
+    { key: 'all', label: `全部(${total})` },
+    ...Object.entries(CATEGORY_LABELS)
+      .filter(([k]) => categories[k])
+      .map(([k, v]) => ({ key: k, label: `${v}(${categories[k]})` })),
+  ];
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '8px 0', overflow: 'auto', whiteSpace: 'nowrap' }}>
+        <Space size={4} wrap>
+          {categoryTabs.map(tab => (
+            <Tag
+              key={tab.key}
+              color={activeCategory === tab.key ? 'blue' : undefined}
+              style={{ cursor: 'pointer', fontSize: 13, padding: '2px 10px', margin: 0 }}
+              onClick={() => setActiveCategory(tab.key)}
+            >
+              {tab.label}
+            </Tag>
+          ))}
+        </Space>
+      </div>
+      <Divider style={{ margin: '4px 0' }} />
+      <div style={{ flex: 1, overflow: 'auto' }}>
+        {loading && announcements.length === 0 ? (
+          <Skeleton active paragraph={{ rows: 6 }} />
+        ) : announcements.length === 0 ? (
+          <Empty description="暂无校园资讯" />
+        ) : (
+          <List
+            dataSource={announcements}
+            loadMore={
+              announcements.length < total ? (
+                <div style={{ textAlign: 'center', marginTop: 12 }}>
+                  <Button onClick={loadMore} loading={loading}>加载更多</Button>
+                </div>
+              ) : undefined
+            }
+            renderItem={(item: any) => (
+              <List.Item
+                style={{ cursor: 'pointer', padding: '12px 8px' }}
+                onClick={() => window.open(item.sourceUrl, '_blank')}
+              >
+                <List.Item.Meta
+                  title={
+                    <Space size={4}>
+                      {item.category && (
+                        <Tag color={CATEGORY_COLORS[item.category] || 'default'} style={{ fontSize: 11, lineHeight: '18px' }}>
+                          {CATEGORY_LABELS[item.category] || item.category}
+                        </Tag>
+                      )}
+                      <Text strong style={{ fontSize: 14 }}>{item.title}</Text>
+                    </Space>
+                  }
+                  description={
+                    <div>
+                      {item.summary && (
+                        <Paragraph ellipsis={{ rows: 1 }} style={{ margin: '4px 0', color: '#666', fontSize: 12 }}>
+                          {item.summary}
+                        </Paragraph>
+                      )}
+                      <Space size={8} style={{ fontSize: 11, color: '#999' }}>
+                        {item.publishDate && <span>{formatDate(item.publishDate)}</span>}
+                        {item.sourceDept && <span>{item.sourceDept.replace(/color=#808080>/g, '')}</span>}
+                        {item.eventDate && <span style={{ color: '#1677ff' }}>活动: {formatDate(item.eventDate)}</span>}
+                        {item.deadline && <span style={{ color: '#ff4d4f' }}>截止: {formatDate(item.deadline)}</span>}
+                      </Space>
+                    </div>
+                  }
+                />
+              </List.Item>
+            )}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function MessageList() {
   const { peerId } = useParams();
@@ -18,6 +166,7 @@ export default function MessageList() {
   const [activePeerName, setActivePeerName] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [activeTab, setActiveTab] = useState('chat');
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,7 +190,6 @@ export default function MessageList() {
       const res = await messageService.list({ peerId: activePeer, pageSize: 50 });
       setMessages(res.data.list.reverse());
 
-      // Mark as read
       const unreadIds = res.data.list.filter((m: any) => m.receiverId === user?.id && m.readStatus === 0).map((m: any) => m.id);
       if (unreadIds.length > 0) {
         await messageService.markRead(unreadIds);
@@ -89,9 +237,8 @@ export default function MessageList() {
     navigate('/messages', { replace: true });
   };
 
-  return (
-    <div style={{ display: 'flex', height: isMobile ? 'calc(100dvh - 120px)' : 'calc(100vh - 180px)' }}>
-      {/* Conversation list — hidden on mobile when chat is active */}
+  const chatContent = (
+    <div style={{ display: 'flex', height: '100%' }}>
       {(!isMobile || !activePeer) && (
         <Card title="会话列表" style={{ width: isMobile ? '100%' : 280, marginRight: isMobile ? 0 : 16, overflow: 'auto' }}>
           {conversations.length === 0 ? <Empty description="暂无消息" /> : (
@@ -114,7 +261,6 @@ export default function MessageList() {
         </Card>
       )}
 
-      {/* Chat area — hidden on mobile when no peer selected */}
       {(!isMobile || activePeer) && (
         <Card
           title={
@@ -165,6 +311,32 @@ export default function MessageList() {
           )}
         </Card>
       )}
+    </div>
+  );
+
+  // Unified height calculation
+  const containerHeight = isMobile ? 'calc(100dvh - 120px - 56px)' : 'calc(100vh - 180px - 60px)';
+
+  return (
+    <div style={{ height: containerHeight }}>
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        style={{ height: '100%' }}
+        tabBarStyle={{ marginBottom: 0 }}
+        items={[
+          {
+            key: 'chat',
+            label: <span><Badge size="small" offset={[6, -2]}><BellOutlined /></Badge> 会话</span>,
+            children: <div style={{ height: 'calc(100% - 46px)' }}>{chatContent}</div>,
+          },
+          {
+            key: 'news',
+            label: '📢 校园资讯',
+            children: <div style={{ height: 'calc(100% - 46px)', padding: '0 4px' }}><AnnouncementPanel /></div>,
+          },
+        ]}
+      />
     </div>
   );
 }

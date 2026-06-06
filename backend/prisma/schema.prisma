@@ -127,3 +127,25 @@ model Message {
 
   @@map("message")
 }
+
+model Announcement {
+  id            Int       @id @default(autoincrement())
+  sourceId      String    @unique @map("source_id")
+  title         String
+  content       String?   @db.Text
+  category      String?
+  summary       String?
+  publishDate   DateTime? @map("publish_date")
+  eventDate     DateTime? @map("event_date")
+  eventLocation String?   @map("event_location")
+  deadline      DateTime?
+  sourceUrl     String    @map("source_url")
+  sourceDept    String?   @map("source_dept")
+  status        String    @default("pending")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+  @@map("announcement")
+}

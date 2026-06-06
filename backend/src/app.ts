@@ -8,6 +8,7 @@ import skillRoutes from './routes/skill.routes.js';
 import demandRoutes from './routes/demand.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import messageRoutes from './routes/message.routes.js';
+import announcementRoutes from './routes/announcement.routes.js';
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use('/api/demands', demandRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', authRoutes);
+app.use('/api/announcements', announcementRoutes);
 
 app.use(errorHandler);
 
