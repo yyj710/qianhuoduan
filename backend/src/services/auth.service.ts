@@ -10,11 +10,8 @@ export class AuthService {
       throw new AppError(400, '用户名已存在');
     }
 
-    if (data.password.length < 8 || data.password.length > 20) {
-      throw new AppError(400, '密码长度需要8-20位');
-    }
-    if (!/[a-zA-Z]/.test(data.password) || !/[0-9]/.test(data.password)) {
-      throw new AppError(400, '密码需要包含字母和数字');
+    if (data.password.length < 6) {
+      throw new AppError(400, '密码长度至少6位');
     }
 
     const hashedPassword = await bcrypt.hash(data.password, config.bcryptRounds);

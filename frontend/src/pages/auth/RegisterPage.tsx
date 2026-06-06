@@ -40,8 +40,8 @@ export default function RegisterPage() {
           <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }, { min: 3, message: '用户名至少3位' }]}>
             <Input prefix={<UserOutlined />} placeholder="用户名" />
           </Form.Item>
-          <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }, { min: 8, max: 20, message: '密码8-20位' }, { pattern: /^(?=.*[a-zA-Z])(?=.*\d)/, message: '密码需包含字母和数字' }]}>
-            <Input.Password prefix={<LockOutlined />} placeholder="密码（8-20位，包含字母和数字）" />
+          <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }, { min: 6, message: '密码至少6位' }]}>
+            <Input.Password prefix={<LockOutlined />} placeholder="密码（至少6位）" />
           </Form.Item>
           <Form.Item name="confirmPassword" rules={[{ required: true, message: '请确认密码' }]}>
             <Input.Password prefix={<LockOutlined />} placeholder="确认密码" />
