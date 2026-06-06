@@ -41,7 +41,10 @@ export class DemandService {
       where.status = 1;
     }
     if (params.keyword) {
-      where.title = { contains: params.keyword };
+      where.OR = [
+        { title: { contains: params.keyword } },
+        { description: { contains: params.keyword } },
+      ];
     }
     if (params.campus) {
       where.campus = params.campus;

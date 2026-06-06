@@ -57,6 +57,41 @@ export class AnnouncementService {
 
     return { list, total, page, pageSize, categories };
   }
+
+  async upcoming() {
+    const now = new Date();
+    const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const fourteenDays = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+
+    const [events, deadlines] = await Promise.all([
+      prisma.announcement.findMany({
+        where: {
+          status: 'published',
+          eventDate: { gte: now, lte: thirtyDays },
+        },
+        orderBy: { eventDate: 'asc' },
+        select: {
+          id: true, sourceId: true, title: true, category: true,
+          summary: true, publishDate: true, eventDate: true,
+          eventLocation: true, deadline: true, sourceUrl: true, sourceDept: true,
+        },
+      }),
+      prisma.announcement.findMany({
+        where: {
+          status: 'published',
+          deadline: { gte: now, lte: fourteenDays },
+        },
+        orderBy: { deadline: 'asc' },
+        select: {
+          id: true, sourceId: true, title: true, category: true,
+          summary: true, publishDate: true, eventDate: true,
+          eventLocation: true, deadline: true, sourceUrl: true, sourceDept: true,
+        },
+      }),
+    ]);
+
+    return { events, deadlines };
+  }
 }
 
 export const announcementService = new AnnouncementService();

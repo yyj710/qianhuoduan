@@ -133,13 +133,13 @@ function AnnouncementPanel() {
                     </Space>
                   }
                   description={
-                    <div>
+                    <div style={{ color: '#555' }}>
                       {item.summary && (
-                        <Paragraph ellipsis={{ rows: 1 }} style={{ margin: '4px 0', color: '#666', fontSize: 12 }}>
+                        <Paragraph ellipsis={{ rows: 1 }} style={{ margin: '4px 0', color: '#444', fontSize: 12 }}>
                           {item.summary}
                         </Paragraph>
                       )}
-                      <Space size={8} style={{ fontSize: 11, color: '#999' }}>
+                      <Space size={8} style={{ fontSize: 11, color: '#888' }}>
                         {item.publishDate && <span>{formatDate(item.publishDate)}</span>}
                         {item.sourceDept && <span>{item.sourceDept.replace(/color=#808080>/g, '')}</span>}
                         {item.eventDate && <span style={{ color: '#1677ff' }}>活动: {formatDate(item.eventDate)}</span>}

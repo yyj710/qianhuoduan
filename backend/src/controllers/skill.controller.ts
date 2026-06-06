@@ -23,6 +23,7 @@ export class SkillController {
         minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
         maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
         tag: req.query.tag as string,
+        sort: req.query.sort as string,
       });
       success(res, result);
     } catch (e) {

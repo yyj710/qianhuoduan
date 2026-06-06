@@ -17,13 +17,16 @@ export class SkillService {
     return { ...skill, tags: JSON.parse(skill.tags) };
   }
 
-  async list(params: { page?: number; pageSize?: number; keyword?: string; campus?: string; minPrice?: number; maxPrice?: number; tag?: string }) {
+  async list(params: { page?: number; pageSize?: number; keyword?: string; campus?: string; minPrice?: number; maxPrice?: number; tag?: string; sort?: string }) {
     const page = params.page || 1;
     const pageSize = params.pageSize || 10;
     const where: any = { status: 1 };
 
     if (params.keyword) {
-      where.title = { contains: params.keyword };
+      where.OR = [
+        { title: { contains: params.keyword } },
+        { description: { contains: params.keyword } },
+      ];
     }
     if (params.campus) {
       where.campus = params.campus;
@@ -38,7 +41,7 @@ export class SkillService {
       prisma.skill.findMany({
         where,
         include: { user: { select: { id: true, username: true, avatar: true, creditScore: true, campus: true } } },
-        orderBy: { createTime: 'desc' },
+        orderBy: params.sort === 'hot' ? { dealCount: 'desc' } : { createTime: 'desc' },
         skip: (page - 1) * pageSize,
         take: pageSize,
       }),

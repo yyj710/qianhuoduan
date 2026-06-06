@@ -16,6 +16,15 @@ export class AnnouncementController {
       next(e);
     }
   }
+
+  async upcoming(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await announcementService.upcoming();
+      success(res, result);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const announcementController = new AnnouncementController();
