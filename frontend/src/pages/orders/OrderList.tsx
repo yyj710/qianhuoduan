@@ -8,9 +8,8 @@ const { Title } = Typography;
 const statusMap: Record<number, { color: string; text: string }> = {
   0: { color: 'orange', text: '待确认' },
   1: { color: 'blue', text: '进行中' },
-  2: { color: 'purple', text: '待评价' },
-  3: { color: 'green', text: '已完成' },
-  4: { color: 'default', text: '已取消' },
+  2: { color: 'green', text: '已完成' },
+  3: { color: 'default', text: '已取消' },
 };
 
 export default function OrderList() {

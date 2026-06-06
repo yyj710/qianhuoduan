@@ -229,7 +229,7 @@ async function scrapeBoardList(jar: string[]): Promise<RawAnnouncement[]> {
       items.push({
         sourceId: idMatch[1],
         title,
-        sourceUrl: `${BASE}/board/${href}`,
+        sourceUrl: href.startsWith('/') ? `${BASE}${href}` : `${BASE}/board/${href.replace(/^board\//, '')}`,
         publishDate: dateMatch ? `${dateMatch[1]}/${dateMatch[2]}` : '',
         sourceDept: dept,
       });

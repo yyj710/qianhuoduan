@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { demandService } from '../../services/demandService';
 import { orderService } from '../../services/orderService';
+import { messageService } from '../../services/messageService';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -32,6 +33,15 @@ export default function DemandDetail() {
       await orderService.create({ sellerId: match.userId, skillId: match.skillId, amount: match.price });
       antMsg.success('订单创建成功');
       navigate('/orders');
+    } catch { /* handled */ }
+  };
+
+  const handleChat = async (match: any) => {
+    if (!user) { navigate('/login'); return; }
+    try {
+      await messageService.send({ receiverId: match.userId, content: `你好，我对你的技能"${match.title}"很感兴趣，想了解一下！` });
+      antMsg.success('消息已发送');
+      navigate(`/messages/${match.userId}`);
     } catch { /* handled */ }
   };
 
@@ -81,7 +91,10 @@ export default function DemandDetail() {
                   </Space>
                 </Col>
                 <Col xs={24} sm={6} style={{ textAlign: 'right' }}>
-                  <Button type="primary" onClick={() => handleOrder(match)} disabled={!user || user.id === match.userId}>下单</Button>
+                  <Space>
+                    <Button onClick={() => handleChat(match)} disabled={!user || user.id === match.userId}>联系TA</Button>
+                    <Button type="primary" onClick={() => handleOrder(match)} disabled={!user || user.id === match.userId}>下单</Button>
+                  </Space>
                 </Col>
               </Row>
             </Card>

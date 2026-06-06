@@ -251,7 +251,13 @@ export default function MessageList() {
                 >
                   <List.Item.Meta
                     avatar={<Badge count={conv.unreadCount} size="small"><Avatar icon={<UserOutlined />} src={conv.peer?.avatar} /></Badge>}
-                    title={conv.peer?.username}
+                    title={
+                      <Space size={4}>
+                        <span>{conv.peer?.username}</span>
+                        {conv.orderId && <Tag color="blue" style={{ fontSize: 10, lineHeight: '16px' }}>订单</Tag>}
+                        {conv.type === 'system' && <Tag color="orange" style={{ fontSize: 10, lineHeight: '16px' }}>系统</Tag>}
+                      </Space>
+                    }
                     description={<Text ellipsis style={{ maxWidth: isMobile ? 240 : 160 }}>{conv.lastMessage}</Text>}
                   />
                 </List.Item>

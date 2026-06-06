@@ -58,7 +58,7 @@ export default function AppLayout() {
     <Layout style={{ minHeight: '100vh' }}>
       <Header style={{ padding: '0 16px', background: colorBgContainer, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100, borderBottom: '1px solid #f0f0f0' }}>
         <span style={{ fontWeight: 'bold', fontSize: 18, cursor: 'pointer' }} onClick={() => navigate('/')}>
-          🏫 深技联
+          🏫 零费skill
         </span>
         <Dropdown menu={{ items: userMenuItems, onClick: ({ key }) => key === 'logout' ? handleLogout() : navigate('/profile') }}>
           <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>

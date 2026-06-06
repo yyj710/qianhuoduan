@@ -2,13 +2,14 @@ import prisma from '../config/prisma.js';
 import { AppError } from './auth.service.js';
 
 export class MessageService {
-  async send(senderId: number, data: { receiverId: number; content: string; type?: string; extraData?: string }) {
+  async send(senderId: number, data: { receiverId: number; content: string; type?: string; orderId?: number; extraData?: string }) {
     const message = await prisma.message.create({
       data: {
         senderId,
         receiverId: data.receiverId,
         type: data.type || 'chat',
         content: data.content,
+        orderId: data.orderId || null,
         extraData: data.extraData,
       },
     });
@@ -68,21 +69,24 @@ export class MessageService {
       orderBy: { createTime: 'desc' },
     });
 
-    // Group by peer
-    const peerMap = new Map<number, any>();
+    // Group by peer and order
+    const peerMap = new Map<string, any>();
     for (const msg of messages) {
       const peerId = msg.senderId === userId ? msg.receiverId : msg.senderId;
-      if (!peerMap.has(peerId)) {
-        peerMap.set(peerId, {
+      const key = msg.orderId ? `${peerId}_${msg.orderId}` : `${peerId}`;
+      if (!peerMap.has(key)) {
+        peerMap.set(key, {
           peerId,
           peer: msg.senderId === userId ? msg.receiver : msg.sender,
           lastMessage: msg.content,
           lastTime: msg.createTime,
           unreadCount: 0,
+          orderId: msg.orderId,
+          type: msg.type,
         });
       }
       if (msg.receiverId === userId && msg.readStatus === 0) {
-        peerMap.get(peerId)!.unreadCount++;
+        peerMap.get(key)!.unreadCount++;
       }
     }
 

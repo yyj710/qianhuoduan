@@ -47,8 +47,13 @@ export class OrderController {
 
   async complete(req: Request, res: Response, next: NextFunction) {
     try {
-      const order = await orderService.complete(parseInt(req.params.id), req.user!.userId);
-      success(res, order, '订单已完成，请评价');
+      const { score, content } = req.body;
+      if (!score || score < 1 || score > 5) {
+        fail(res, 400, '请提供1-5星的评分');
+        return;
+      }
+      const order = await orderService.complete(parseInt(req.params.id), req.user!.userId, { score, content });
+      success(res, order, '订单已完成，评价成功');
     } catch (e) {
       if (e instanceof AppError) { fail(res, e.code, e.message); } else { next(e); }
     }
