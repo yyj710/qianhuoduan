@@ -25,6 +25,37 @@ export class AnnouncementController {
       next(e);
     }
   }
+
+  // Admin endpoint: get all pending announcements with full content
+  async getPending(req: Request, res: Response, next: NextFunction) {
+    try {
+      const list = await announcementService.getPending();
+      success(res, list);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  // Admin endpoint: update a single announcement classification
+  async batchUpdate(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const result = await announcementService.batchUpdate(parseInt(id), req.body);
+      success(res, result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  // Admin endpoint: clean old records
+  async cleanOld(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await announcementService.cleanOld();
+      success(res, result);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const announcementController = new AnnouncementController();

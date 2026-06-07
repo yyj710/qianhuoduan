@@ -92,6 +92,25 @@ export class AnnouncementService {
 
     return { events, deadlines };
   }
+
+  async getPending() {
+    return prisma.announcement.findMany({
+      where: { status: 'pending' },
+      orderBy: { id: 'asc' },
+    });
+  }
+
+  async batchUpdate(id: number, data: {
+    category?: string; summary?: string; eventDate?: string | null;
+    eventLocation?: string | null; deadline?: string | null; status?: string;
+  }) {
+    return prisma.announcement.update({ where: { id }, data });
+  }
+
+  async cleanOld() {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    return prisma.announcement.deleteMany({ where: { createdAt: { lt: thirtyDaysAgo } } });
+  }
 }
 
 export const announcementService = new AnnouncementService();
