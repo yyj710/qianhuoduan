@@ -1,4 +1,4 @@
-import prisma from '../config/prisma.js';
+﻿import prisma from '../config/prisma.js';
 
 export interface MatchResult {
   skillId: number;
@@ -16,6 +16,7 @@ export interface MatchResult {
   ratingScore: number;
   campusScore: number;
   onlineScore: number;
+  categoryScore: number;
 }
 
 export class MatchingService {
@@ -34,11 +35,13 @@ export class MatchingService {
       const skillTags: string[] = JSON.parse(skill.tags);
 
       const tagScore = this.calculateTagMatch(demandTags, skillTags);
+      const categoryScore = this.calculateCategoryMatch(demand.category, skill.category);
       const ratingScore = this.calculateRatingScore(skill.user.creditScore);
       const campusScore = this.calculateCampusScore(demand.campus, skill.campus);
       const onlineScore = this.calculateOnlineScore(skill.user.onlineStatus, skill.user.lastActiveTime);
 
-      const totalScore = tagScore * 0.5 + ratingScore * 0.2 + campusScore * 0.2 + onlineScore * 0.1;
+      // Updated weights: tag 40% + category 20% + credit 15% + campus 15% + online 10%
+      const totalScore = tagScore * 0.4 + categoryScore * 0.2 + ratingScore * 0.15 + campusScore * 0.15 + onlineScore * 0.1;
 
       return {
         skillId: skill.id,
@@ -56,6 +59,7 @@ export class MatchingService {
         ratingScore,
         campusScore,
         onlineScore,
+        categoryScore,
       };
     });
 
@@ -71,6 +75,12 @@ export class MatchingService {
     if (demandTags.length === 0) return 0;
     const matched = demandTags.filter(tag => skillTags.includes(tag)).length;
     return (matched / demandTags.length) * 100;
+  }
+
+  private calculateCategoryMatch(demandCategory: string | null, skillCategory: string | null): number {
+    if (!demandCategory || !skillCategory) return 0;
+    if (demandCategory === skillCategory) return 100;
+    return 0;
   }
 
   private calculateRatingScore(creditScore: number): number {

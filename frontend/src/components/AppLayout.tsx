@@ -4,12 +4,16 @@ import { Layout, Badge, Avatar, Dropdown, theme } from 'antd';
 import {
   HomeOutlined, ToolOutlined, FileSearchOutlined,
   ShoppingCartOutlined, MessageOutlined, UserOutlined, LogoutOutlined,
+  BellOutlined,
 } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { logout } from '../store/authSlice';
 import { setUnreadCount } from '../store/messageSlice';
+import { setNotificationUnreadCount } from '../store/notificationSlice';
 import { messageService } from '../services/messageService';
+import { notificationService } from '../services/notificationService';
+import SeniorOnboardingModal from './SeniorOnboardingModal';
 
 const { Header, Content } = Layout;
 
@@ -27,6 +31,7 @@ export default function AppLayout() {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const unreadCount = useSelector((state: RootState) => state.message.unreadCount);
+  const notifUnread = useSelector((state: RootState) => state.notification.unreadCount);
   const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
 
   const fetchUnread = useCallback(async () => {
@@ -36,11 +41,19 @@ export default function AppLayout() {
     } catch { /* ignore */ }
   }, [dispatch]);
 
+  const fetchNotifUnread = useCallback(async () => {
+    try {
+      const res = await notificationService.unreadCount();
+      dispatch(setNotificationUnreadCount(res.data.count));
+    } catch { /* ignore */ }
+  }, [dispatch]);
+
   useEffect(() => {
     fetchUnread();
-    const interval = setInterval(fetchUnread, unreadCount > 0 ? 3000 : 5000);
+    fetchNotifUnread();
+    const interval = setInterval(() => { fetchUnread(); fetchNotifUnread(); }, 5000);
     return () => clearInterval(interval);
-  }, [fetchUnread, unreadCount]);
+  }, [fetchUnread, fetchNotifUnread]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -60,15 +73,24 @@ export default function AppLayout() {
         <span style={{ fontWeight: 'bold', fontSize: 18, cursor: 'pointer' }} onClick={() => navigate('/')}>
           🏫 零费skill
         </span>
-        <Dropdown menu={{ items: userMenuItems, onClick: ({ key }) => key === 'logout' ? handleLogout() : navigate('/profile') }}>
-          <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Avatar icon={<UserOutlined />} src={user?.avatar} />
-            <span className="hide-on-mobile">{user?.username || '用户'}</span>
-          </span>
-        </Dropdown>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <Badge count={notifUnread} size="small" offset={[2, -2]}>
+            <BellOutlined
+              style={{ fontSize: 20, cursor: 'pointer', color: '#666' }}
+              onClick={() => navigate('/notifications')}
+            />
+          </Badge>
+          <Dropdown menu={{ items: userMenuItems, onClick: ({ key }) => key === 'logout' ? handleLogout() : navigate('/profile') }}>
+            <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Avatar icon={<UserOutlined />} src={user?.avatar} />
+              <span className="hide-on-mobile">{user?.username || '用户'}</span>
+            </span>
+          </Dropdown>
+        </div>
       </Header>
 
       <Content style={{ margin: 'var(--content-margin)', padding: 'var(--content-padding)', paddingBottom: 'calc(var(--bottom-bar-height) + var(--content-padding))', background: colorBgContainer, borderRadius: borderRadiusLG, minHeight: 280 }}>
+        <SeniorOnboardingModal />
         <Outlet />
       </Content>
 

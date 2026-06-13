@@ -1,13 +1,10 @@
-import api from './api';
+﻿import api from './api';
 
 export const authService = {
-  register: (data: { username: string; password: string; phone?: string; college?: string; campus?: string }) =>
-    api.post('/auth/register', data),
-
-  login: (username: string, password: string) =>
-    api.post('/auth/login', { username, password }),
-
-  getProfile: () => api.get('/users/profile'),
-
-  updateProfile: (data: any) => api.put('/users/profile', data),
+  register: (data: any) => api.post('/auth/register', data),
+  login: (data: any) => api.post('/auth/login', data),
+  getProfile: () => api.get('/auth/profile'),
+  updateProfile: (data: any) => api.put('/auth/profile', data),
+  getPublicProfile: (userId: number) => api.get(`/auth/users/${userId}`),
+  applyVerify: (verifyInfo: string) => api.post('/auth/verify/apply', { verifyInfo }),
 };

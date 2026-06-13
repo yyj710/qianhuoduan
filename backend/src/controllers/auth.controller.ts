@@ -60,6 +60,52 @@ export class AuthController {
       }
     }
   }
+
+  async getPublicProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = Number(req.params.id);
+      if (!userId) { fail(res, 400, '无效的用户ID'); return; }
+      const profile = await authService.getPublicProfile(userId);
+      success(res, profile);
+    } catch (e) {
+      if (e instanceof AppError) {
+        fail(res, e.code, e.message);
+      } else {
+        next(e);
+      }
+    }
+  }
+
+  async applyVerify(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { verifyInfo } = req.body;
+      if (!verifyInfo) { fail(res, 400, '请填写认证信息'); return; }
+      const result = await authService.applyVerify(req.user!.userId, verifyInfo);
+      success(res, result, result.message);
+    } catch (e) {
+      if (e instanceof AppError) fail(res, e.code, e.message);
+      else next(e);
+    }
+  }
+
+  async approveVerify(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = Number(req.params.id);
+      const { approve } = req.body;
+      const result = await authService.approveVerify(userId, approve);
+      success(res, result, result.message);
+    } catch (e) {
+      if (e instanceof AppError) fail(res, e.code, e.message);
+      else next(e);
+    }
+  }
+
+  async getPendingVerifications(req: Request, res: Response, next: NextFunction) {
+    try {
+      const list = await authService.getPendingVerifications();
+      success(res, list);
+    } catch (e) { next(e); }
+  }
 }
 
 export const authController = new AuthController();

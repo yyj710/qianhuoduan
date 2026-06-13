@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { Card, Form, Input, InputNumber, Select, Button, Typography, Steps, message as antMsg } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { skillService } from '../../services/skillService';
 import { useDraftSave } from '../../hooks/useDraftSave';
+import { CATEGORIES } from '../../constants/categories';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -84,6 +85,9 @@ export default function SkillCreate() {
             <Form.Item name="title" label="技能标题" rules={[{ required: true, message: '请输入标题' }]}>
               <Input placeholder="如：Python编程辅导" maxLength={100} />
             </Form.Item>
+            <Form.Item name="category" label="分类" rules={[{ required: true, message: '请选择分类' }]}>
+              <Select placeholder="选择分类" options={CATEGORIES.map(c => ({ label: c.label, value: c.value }))} />
+            </Form.Item>
             <Form.Item name="tags" label="标签（输入后按回车添加）" rules={[{ required: true, message: '请至少添加一个标签' }]}>
               <Select
                 mode="tags"
@@ -102,7 +106,7 @@ export default function SkillCreate() {
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
                 <Button onClick={() => navigate('/skills')}>取消</Button>
                 <Button type="primary" onClick={() => {
-                  form.validateFields(['title', 'tags']).then(() => setStep(1)).catch(() => {});
+                  form.validateFields(['title', 'category', 'tags']).then(() => setStep(1)).catch(() => {});
                 }}>下一步 →</Button>
               </div>
             )}

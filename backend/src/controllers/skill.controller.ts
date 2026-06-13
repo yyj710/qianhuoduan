@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+﻿import { Request, Response, NextFunction } from 'express';
 import { skillService } from '../services/skill.service.js';
 import { AppError } from '../services/auth.service.js';
 import { success, fail } from '../utils/response.js';
@@ -20,6 +20,7 @@ export class SkillController {
         pageSize: parseInt(req.query.pageSize as string),
         keyword: req.query.keyword as string,
         campus: req.query.campus as string,
+        category: req.query.category as string,
         minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
         maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
         tag: req.query.tag as string,

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+﻿import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
   id: number;
@@ -9,6 +9,10 @@ interface User {
   avatar?: string;
   creditScore: number;
   role: string;
+  identity?: string;
+  bio?: string;
+  major?: string;
+  verified?: boolean;
 }
 
 interface AuthState {

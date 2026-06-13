@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import cors from 'cors';
 import { errorHandler } from './middleware/error.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
@@ -9,6 +9,9 @@ import demandRoutes from './routes/demand.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import announcementRoutes from './routes/announcement.routes.js';
+import bookmarkRoutes from './routes/bookmark.routes.js';
+import followRoutes from './routes/follow.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
 
 const app = express();
 
@@ -35,6 +38,9 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', authRoutes);
 app.use('/api/announcements', announcementRoutes);
+app.use('/api/bookmarks', bookmarkRoutes);
+app.use('/api/follows', followRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use(errorHandler);
 

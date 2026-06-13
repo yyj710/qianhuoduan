@@ -1,8 +1,9 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Card, Form, Input, Button, Select, Typography, message as antMsg } from 'antd';
 import { UserOutlined, LockOutlined, PhoneOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import { IDENTITY_OPTIONS } from '../../constants/categories';
 
 const { Title, Text } = Typography;
 
@@ -46,11 +47,17 @@ export default function RegisterPage() {
           <Form.Item name="confirmPassword" rules={[{ required: true, message: '请确认密码' }]}>
             <Input.Password prefix={<LockOutlined />} placeholder="确认密码" />
           </Form.Item>
+          <Form.Item name="identity">
+            <Select placeholder="选择年级（选填）" allowClear options={IDENTITY_OPTIONS} />
+          </Form.Item>
           <Form.Item name="phone">
             <Input prefix={<PhoneOutlined />} placeholder="手机号（选填）" />
           </Form.Item>
           <Form.Item name="college">
             <Input placeholder="院系（选填）" />
+          </Form.Item>
+          <Form.Item name="major">
+            <Input placeholder="专业（选填）" />
           </Form.Item>
           <Form.Item name="campus">
             <Select placeholder="选择校区（选填）" allowClear options={campusOptions.map(c => ({ label: c, value: c }))} />

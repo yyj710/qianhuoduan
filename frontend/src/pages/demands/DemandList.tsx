@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Card, Row, Col, Tag, Typography, Input, Select, Button, Empty, Pagination } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { demandService } from '../../services/demandService';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { CATEGORIES, getCategoryLabel, getCategoryColor } from '../../constants/categories';
 
 const { Title, Text } = Typography;
 
@@ -15,17 +16,18 @@ export default function DemandList() {
   const [loading, setLoading] = useState(false);
   const [keyword, setKeyword] = useState('');
   const [campus, setCampus] = useState('');
+  const [category, setCategory] = useState('');
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const navigate = useNavigate();
 
   const fetchList = () => {
     setLoading(true);
-    demandService.list({ page, pageSize: 12, keyword: keyword || undefined, campus: campus || undefined })
+    demandService.list({ page, pageSize: 12, keyword: keyword || undefined, campus: campus || undefined, category: category || undefined })
       .then(res => { setDemands(res.data.list); setTotal(res.data.total); })
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchList(); }, [page]);
+  useEffect(() => { fetchList(); }, [page, category]);
 
   const statusMap: Record<number, { color: string; text: string }> = { 0: { color: 'default', text: '已关闭' }, 1: { color: 'green', text: '正常' }, 2: { color: 'blue', text: '已完成' } };
 
@@ -35,6 +37,17 @@ export default function DemandList() {
         <Title level={4} style={{ margin: 0 }}>需求大厅</Title>
         {isLoggedIn && <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/demands/create')}>发布需求</Button>}
       </div>
+
+      {/* Category tabs */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+        <Tag color={!category ? 'green' : undefined} style={{ cursor: 'pointer', fontSize: 13, padding: '2px 10px' }} onClick={() => { setCategory(''); setPage(1); }}>全部</Tag>
+        {CATEGORIES.map(c => (
+          <Tag key={c.value} color={category === c.value ? 'green' : undefined} style={{ cursor: 'pointer', fontSize: 13, padding: '2px 10px' }} onClick={() => { setCategory(c.value); setPage(1); }}>
+            {c.label}
+          </Tag>
+        ))}
+      </div>
+
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
         <Input placeholder="搜索需求" prefix={<SearchOutlined />} value={keyword} onChange={e => setKeyword(e.target.value)} onPressEnter={() => { setPage(1); fetchList(); }} style={{ flex: '1 1 200px', minWidth: 120 }} />
         <Select placeholder="校区" style={{ flex: '0 0 120px' }} value={campus} onChange={v => { setCampus(v); setPage(1); }} allowClear options={['粤海校区', '丽湖校区', '沧海校区', '不限'].map(c => ({ label: c, value: c }))} />
@@ -47,6 +60,7 @@ export default function DemandList() {
               <Card hoverable className="card-hover" onClick={() => navigate(`/demands/${d.id}`)}>
                 <div style={{ marginBottom: 4 }}>
                   <Tag color={statusMap[d.status]?.color}>{statusMap[d.status]?.text}</Tag>
+                  {d.category && <Tag color={getCategoryColor(d.category)}>{getCategoryLabel(d.category)}</Tag>}
                 </div>
                 <Text strong style={{ fontSize: 16 }}>{d.title}</Text>
                 <div style={{ margin: '8px 0' }}>

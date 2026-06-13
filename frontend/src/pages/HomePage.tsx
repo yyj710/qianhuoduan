@@ -1,12 +1,23 @@
 import { useEffect, useState } from 'react';
 import { Row, Col, Card, Statistic, Typography, List, Tag, Button, Input, Segmented, Timeline, Badge, Space } from 'antd';
-import { ToolOutlined, FileSearchOutlined, UserOutlined, SearchOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import {
+  ToolOutlined, FileSearchOutlined, UserOutlined, SearchOutlined, EnvironmentOutlined,
+  BookOutlined, ReadOutlined, SolutionOutlined, FileTextOutlined,
+  CodeOutlined, GlobalOutlined, SwapOutlined, HomeOutlined, AppstoreOutlined,
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { skillService } from '../services/skillService';
 import { demandService } from '../services/demandService';
 import { announcementService } from '../services/announcementService';
+import { CATEGORIES } from '../constants/categories';
 
 const { Title, Text } = Typography;
+const ICON_MAP: Record<string, any> = {
+  BookOutlined, ReadOutlined, SolutionOutlined, FileTextOutlined,
+  CodeOutlined, GlobalOutlined, SwapOutlined, HomeOutlined, AppstoreOutlined,
+  ToolOutlined, FileSearchOutlined,
+};
+
 
 const CATEGORY_LABELS: Record<string, string> = {
   scholarship: '奖学金', lecture: '讲座', exam: '考试', competition: '比赛',
@@ -83,6 +94,45 @@ export default function HomePage() {
         </div>
       </div>
 
+
+      {/* Category Quick Entry Grid */}
+      <Card
+        size="small"
+        style={{ marginBottom: 20, borderRadius: 12 }}
+        bodyStyle={{ padding: '12px 8px' }}
+      >
+        <Text strong style={{ fontSize: 13, display: 'block', marginBottom: 10, paddingLeft: 8 }}>
+          🗂️ 分类导航
+        </Text>
+        <Row gutter={[8, 8]}>
+          {CATEGORIES.map(cat => {
+            const Icon = ICON_MAP[cat.icon] || AppstoreOutlined;
+            return (
+              <Col xs={8} sm={8} md={8} key={cat.value}>
+                <div
+                  onClick={() => navigate(`/skills?category=${cat.value}`)}
+                  style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    gap: 6, cursor: 'pointer', padding: '10px 4px', borderRadius: 8,
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#f5f5f5')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <div style={{
+                    width: 44, height: 44, borderRadius: '50%',
+                    background: cat.color + '18',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Icon style={{ fontSize: 22, color: cat.color }} />
+                  </div>
+                  <Text style={{ fontSize: 11, lineHeight: 1 }}>{cat.label}</Text>
+                </div>
+              </Col>
+            );
+          })}
+        </Row>
+      </Card>
       {/* Stats */}
       <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
         <Col xs={8}>
@@ -116,6 +166,9 @@ export default function HomePage() {
                     title={<Text style={{ fontSize: 14 }}>{item.title}</Text>}
                     description={
                       <Space size={4} wrap>
+                        {item.category && (
+                          <Tag color="blue" style={{ fontSize: 11 }}>{item.categoryLabel || item.category}</Tag>
+                        )}
                         {item.tags?.slice(0, 3).map((t: string) => <Tag key={t} color="blue" style={{ fontSize: 11 }}>{t}</Tag>)}
                         <Tag style={{ fontSize: 11 }}>{item.campus}</Tag>
                         {item.dealCount > 0 && <Text type="secondary" style={{ fontSize: 11 }}>{item.dealCount}笔成交</Text>}

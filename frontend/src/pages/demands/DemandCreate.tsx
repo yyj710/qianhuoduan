@@ -1,8 +1,9 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Card, Form, Input, InputNumber, DatePicker, Select, Button, Typography, Steps, message as antMsg } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { demandService } from '../../services/demandService';
 import { useDraftSave } from '../../hooks/useDraftSave';
+import { CATEGORIES } from '../../constants/categories';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
@@ -58,6 +59,9 @@ export default function DemandCreate() {
             <Form.Item name="title" label="需求标题" rules={[{ required: true }]}>
               <Input placeholder="如：需要Python辅导" maxLength={100} />
             </Form.Item>
+            <Form.Item name="category" label="分类" rules={[{ required: true, message: '请选择分类' }]}>
+              <Select placeholder="选择分类" options={CATEGORIES.map(c => ({ label: c.label, value: c.value }))} />
+            </Form.Item>
             <Form.Item name="tags" label="标签（输入后按回车添加）" rules={[{ required: true, message: '请至少添加一个标签' }]}>
               <Select
                 mode="tags"
@@ -75,7 +79,7 @@ export default function DemandCreate() {
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
               <Button onClick={() => navigate('/demands')}>取消</Button>
               <Button type="primary" onClick={() => {
-                form.validateFields(['title', 'tags']).then(() => setStep(1)).catch(() => {});
+                form.validateFields(['title', 'category', 'tags']).then(() => setStep(1)).catch(() => {});
               }}>下一步 →</Button>
             </div>
           </div>

@@ -16,7 +16,7 @@ export default function LoginPage() {
   const onFinish = async (values: { username: string; password: string }) => {
     setLoading(true);
     try {
-      const res = await authService.login(values.username, values.password);
+      const res = await authService.login({ username: values.username, password: values.password });
       dispatch(setAuth({ user: res.data.user, token: res.data.token }));
       antMsg.success('登录成功');
       navigate('/');

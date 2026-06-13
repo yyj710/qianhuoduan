@@ -20,6 +20,11 @@ model User {
   onlineStatus    Int       @default(0) @map("online_status")
   lastActiveTime  DateTime? @map("last_active_time")
   status          Int       @default(1)
+  identity        String?   @map("identity")
+  bio             String?   @db.Text @map("bio")
+  major           String?   @map("major")
+  verified        Boolean   @default(false) @map("verified")
+  verifyInfo      String?   @map("verify_info")
   createTime      DateTime  @default(now()) @map("create_time")
   updateTime      DateTime  @updatedAt @map("update_time")
 
@@ -31,6 +36,9 @@ model User {
   receivedMessages Message[] @relation("ReceivedMessages")
   givenComments   Comment[] @relation("GivenComments")
   receivedComments Comment[] @relation("ReceivedComments")
+  bookmarks       Bookmark[]
+  following       Follow[]  @relation("Following")
+  followers       Follow[]  @relation("Followers")
 
   @@map("user")
 }
@@ -39,6 +47,7 @@ model Skill {
   id           Int      @id @default(autoincrement())
   userId       Int      @map("user_id")
   title        String
+  category     String?  @map("category")
   tags         String
   description  String
   price        Float
@@ -59,6 +68,7 @@ model Demand {
   id          Int      @id @default(autoincrement())
   userId      Int      @map("user_id")
   title       String
+  category    String?  @map("category")
   tags        String
   description String
   budget      Float
@@ -129,6 +139,49 @@ model Message {
   order      Order?   @relation(fields: [orderId], references: [id])
 
   @@map("message")
+}
+
+model Bookmark {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  targetType String   @map("target_type")
+  targetId   Int      @map("target_id")
+  createTime DateTime @default(now()) @map("create_time")
+
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, targetType, targetId])
+  @@index([userId, targetType])
+  @@map("bookmark")
+}
+
+model Follow {
+  id          Int      @id @default(autoincrement())
+  followerId  Int      @map("follower_id")
+  followingId Int      @map("following_id")
+  createTime  DateTime @default(now()) @map("create_time")
+
+  follower    User     @relation("Following", fields: [followerId], references: [id])
+  following   User     @relation("Followers", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+  @@map("follow")
+}
+
+model Notification {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  type        String
+  title       String
+  content     String
+  relatedId   Int?     @map("related_id")
+  relatedType String?  @map("related_type")
+  readStatus  Int      @default(0) @map("read_status")
+  link        String?
+  createTime  DateTime @default(now()) @map("create_time")
+
+  @@index([userId, readStatus])
+  @@map("notification")
 }
 
 model Announcement {

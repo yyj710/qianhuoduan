@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+﻿import { Request, Response, NextFunction } from 'express';
 import { demandService } from '../services/demand.service.js';
 import { AppError } from '../services/auth.service.js';
 import { success, fail } from '../utils/response.js';
@@ -20,6 +20,7 @@ export class DemandController {
         pageSize: parseInt(req.query.pageSize as string),
         keyword: req.query.keyword as string,
         campus: req.query.campus as string,
+        category: req.query.category as string,
         status: req.query.status ? parseInt(req.query.status as string) : undefined,
       });
       success(res, result);
